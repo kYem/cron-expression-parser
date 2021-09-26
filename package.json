@@ -1,0 +1,35 @@
+{
+  "name": "cron-expression-parser",
+  "version": "0.0.1",
+  "description": "Cron expression parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register 'tests/**/*.spec.ts'",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "clean": "rm -rf dist build"
+  },
+  "keywords": [
+    "cron",
+    "cron-parser",
+    "crontab"
+  ],
+  "author": "kYem",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.9.3",
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
+    "chai": "^4.3.4",
+    "eslint": "^7.32.0",
+    "mocha": "^9.1.1",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  }
+}
