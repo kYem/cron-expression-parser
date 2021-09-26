@@ -1,11 +1,4 @@
-class ParsedExpression {
-  minute: number[] = [];
-  hour: number[] = [];
-  dayOfMonth: number[] = [];
-  month: number[] = [];
-  dayOfWeek: number[] = [];
-  command = '';
-}
+import { ParsedExpression } from './ParsedExpression';
 
 
 type Validation = { min: number, max: number };
