@@ -9,6 +9,11 @@ describe('parser', function () {
       '',
       '* *',
       'a * * * *',
+      'a-a * * * *',
+      '*/0 * * * *',
+      '000 * * * *', // Not valid atm
+      '1-0 * * * *',
+      '*,1-0 * * * *',
     ].forEach(expression => {
       it(`should throw error when parsing "${expression}"`, () => {
         expect(() => parse(expression)).to.throw(Error);
@@ -128,6 +133,42 @@ describe('parser', function () {
       });
     });
   });
+
+  describe('month', function () {
+
+    const createMonth = (field: string) => `* * * ${field} * echo Hello`;
+    describe('expected not valid', function () {
+      [
+        createMonth('0'),
+        createMonth('13'),
+        createMonth('*/13'),
+        createMonth('*/0'),
+        createMonth('1-99'),
+      ].forEach(expression => {
+        it(`should throw error when parsing "${expression}"`, () => {
+          expect(() => parse(expression)).to.throw(Error);
+        });
+      });
+    });
+
+    const expectedOf5 = [0, 5, 10];
+    [
+      { expression: createMonth('*'), expected: generateFullEntries(validationMap.month) },
+      { expression: createMonth('1'), expected: [1] },
+      { expression: createMonth('*/10'), expected: [0, 10] },
+      { expression: createMonth('*/5'), expected: expectedOf5 },
+      { expression: createMonth('*/6'), expected: [0, 6, 12] },
+      { expression: createMonth('*/10,*/5'), expected: expectedOf5 },
+      { expression: createMonth('4-5'), expected: [4, 5] },
+      { expression: createMonth('5-5'), expected: [5] },
+    ].forEach(({ expression, expected }) => {
+      it(`should parse "${expression}" and return ${expected}`, () => {
+        const parsedExpression = parse(expression);
+        expect(parsedExpression.month).be.eqls(expected);
+      });
+    });
+  });
+
 
 
 });
