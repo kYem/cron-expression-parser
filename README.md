@@ -22,11 +22,26 @@ npm install
 ### Setup local executable
 ```shell
 npm run generate
+npm link
 ```
 
-Now you can run the command with string argument
+Now you can run the command with string argument, might need to restart your shell
 ```shell
 cron-expression-parser "*/15 0 1,15 * 1-5 /usr/bin/find"
+```
+
+Alternatively can try running example command without generating cli
+```sh
+npm run example
+```
+
+```text
+minute        0 15 30 45
+hour          0
+day of month  1 15
+month         1 2 3 4 5 6 7 8 9 10 11 12
+day of week   1 2 3 4 5
+command       /usr/bin/find
 ```
 
 
@@ -44,19 +59,7 @@ It follows standard cron expression syntax
 ```
 More information available in [wikipedia page](https://en.wikipedia.org/wiki/Cron#CRON_expression)
 
-Output
-```sh
-npm run example";
-```
 
-```shell
-minute        0 15 30 45
-hour          0
-day of month  1 15
-month         1 2 3 4 5 6 7 8 9 10 11 12
-day of week   1 2 3 4 5
-command       /usr/bin/find
-```
 
 
 ## Usage
