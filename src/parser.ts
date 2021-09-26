@@ -36,6 +36,14 @@ const isValidNumericValue = function (expression: string, { min, max }: Validati
   return value;
 };
 
+export const generateFullEntries = (validation: Validation): number[] => {
+  const fullEntries: number[] = [];
+  for (let value = validation.min; value <= validation.max; value++) {
+    fullEntries.push(value);
+  }
+  return fullEntries;
+};
+
 /**
  * parseField of specific cron expression field with validation
  * @param field
@@ -44,7 +52,7 @@ const isValidNumericValue = function (expression: string, { min, max }: Validati
 const parseField = (field: string, validation: Validation): number[] => {
 
   if (field === '*') {
-    return Array.from({ length: validation.max + 1 }).map((v, i) => i);
+    return generateFullEntries(validation);
   }
 
   // No spaces in between ranges are support

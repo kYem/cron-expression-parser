@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { parse, validationMap } from '../src/parser';
+import { generateFullEntries, parse, validationMap } from '../src/parser';
 
 describe('parser', function () {
 
@@ -88,6 +88,43 @@ describe('parser', function () {
       it(`should parse "${expression}" and return ${expected}`, () => {
         const parsedExpression = parse(expression);
         expect(parsedExpression.hour).be.eqls(expected);
+      });
+    });
+  });
+
+  describe('dayOfMonth', function () {
+
+    const createDayOfMonth = (field: string) => `* * ${field} * * echo Hello`;
+    describe('expected not valid', function () {
+      [
+        createDayOfMonth(''),
+        createDayOfMonth('a'),
+        createDayOfMonth('a-a'),
+        createDayOfMonth('0'),
+        createDayOfMonth('000'),
+        createDayOfMonth('*/32'),
+        createDayOfMonth('1-0'),
+        createDayOfMonth('1-32'),
+        createDayOfMonth('*,1-0'),
+      ].forEach(expression => {
+        it(`should throw error when parsing "${expression}"`, () => {
+          expect(() => parse(expression)).to.throw(Error);
+        });
+      });
+    });
+
+    const expectedOf5 = [0, 5, 10, 15, 20, 25, 30];
+    [
+      { expression: createDayOfMonth('*'), expected: generateFullEntries(validationMap.dayOfMonth) },
+      { expression: createDayOfMonth('1'), expected: [1] },
+      { expression: createDayOfMonth('*/15'), expected: [0, 15, 30] },
+      { expression: createDayOfMonth('*/5'), expected: expectedOf5 },
+      { expression: createDayOfMonth('*/15,*/5'), expected: expectedOf5 },
+      { expression: createDayOfMonth('2-5'), expected: [2, 3, 4, 5] },
+    ].forEach(({ expression, expected }) => {
+      it(`should parse "${expression}" and return ${expected}`, () => {
+        const parsedExpression = parse(expression);
+        expect(parsedExpression.dayOfMonth).be.eqls(expected);
       });
     });
   });
