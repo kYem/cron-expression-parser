@@ -10,9 +10,13 @@ class ParsedExpression {
 
 
 type Validation = { min: number, max: number };
-const validationMap = {
+export const validationMap = {
   minute: { min: 0, max: 59 },
-}
+  hour: { min: 0, max: 23 },
+  dayOfMonth: { min: 1, max: 31 },
+  month: { min: 1, max: 12 }, //  JAN–DEC support
+  dayOfWeek: { min: 0, max: 6 }, // SUN–SAT
+} as const;
 
 
 const isValidNumericValue = function (expression: string, { min, max }: Validation) {
@@ -31,21 +35,26 @@ const isValidNumericValue = function (expression: string, { min, max }: Validati
 
   return value;
 };
-// 0–59	* , -
-const parseMinute = (minute: string): number[] => {
 
-  const validation = validationMap.minute;
-  if (minute === '*') {
+/**
+ * parseField of specific cron expression field with validation
+ * @param field
+ * @param validation
+ */
+const parseField = (field: string, validation: Validation): number[] => {
+
+  if (field === '*') {
     return Array.from({ length: validation.max + 1 }).map((v, i) => i);
   }
 
-  const minuteParts = minute.split(',');
+  // No spaces in between ranges are support
+  const listParts = field.split(',');
   const timeSet = new Set<number>();
 
-  minuteParts.forEach(expression => {
+  listParts.forEach(listExpression => {
 
-    if (expression.startsWith('*/')) {
-      const stepValue = isValidNumericValue(expression.replace('*/', ''), validation);
+    if (listExpression.startsWith('*/')) {
+      const stepValue = isValidNumericValue(listExpression.replace('*/', ''), validation);
       if (validation.min <= stepValue && stepValue <= validation.max) {
         let currentStep = 0;
         while (currentStep <= validation.max) {
@@ -56,10 +65,10 @@ const parseMinute = (minute: string): number[] => {
       return;
     }
 
-    if (expression.includes('-')) {
-      const rangeParts = expression.split('-');
+    if (listExpression.includes('-')) {
+      const rangeParts = listExpression.split('-');
       if (rangeParts.length !== 2) {
-        throw new Error(`Range is not valid, received expression ${expression}`)
+        throw new Error(`Range is not valid, received expression ${listExpression}`)
       }
 
       const validStart = isValidNumericValue(rangeParts[0], validation);
@@ -71,22 +80,24 @@ const parseMinute = (minute: string): number[] => {
     }
 
     // Is parseInt is enough to validate?
-    if (expression.length === 1 || expression.length === 2) {
-      const value = isValidNumericValue(expression, validation);
+    if (listExpression.length === 1 || listExpression.length === 2) {
+      const value = isValidNumericValue(listExpression, validation);
       timeSet.add(value);
       return;
     }
 
-    throw new Error(`"${expression}" expression is not supported`);
+    throw new Error(`"${listExpression}" expression is not supported`);
   });
 
-  return Array.from(timeSet);
+  return Array.from(timeSet).sort((a, b) => a - b);
 }
 
 
 // "*/15 0 1,15 * 1-5 /usr/bin/find"
 export const parse = (expression: string): ParsedExpression => {
 
+  // @TODO How to deal with empty multiple empty spaces within the expression
+  // .filter(Boolean) ?
   const parts = expression.split(' ');
   if (parts.length < 5) {
     throw new Error(`Expression not valid`);
@@ -104,8 +115,13 @@ export const parse = (expression: string): ParsedExpression => {
   // Validate that the input for expression part is valid
   // Convert expression into array representation
   // return the data and update ParsedExpression
-  parsedExpression.minute = parseMinute(minute);
+  parsedExpression.minute = parseField(minute, validationMap.minute);
+  parsedExpression.hour = parseField(hour, validationMap.hour);
+  parsedExpression.dayOfMonth = parseField(dayOfMonth, validationMap.dayOfMonth);
+  parsedExpression.month = parseField(month, validationMap.month);
+  parsedExpression.dayOfWeek = parseField(dayOfWeek, validationMap.dayOfWeek);
 
+  parsedExpression.command = command.join(' ');
 
   return parsedExpression;
 }
