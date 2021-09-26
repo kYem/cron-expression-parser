@@ -119,11 +119,11 @@ describe('parser', function () {
       });
     });
 
-    const expectedOf5 = [0, 5, 10, 15, 20, 25, 30];
+    const expectedOf5 = [1, 6, 11, 16, 21, 26, 31];
     [
       { expression: createDayOfMonth('*'), expected: generateFullEntries(validationMap.dayOfMonth) },
       { expression: createDayOfMonth('1'), expected: [1] },
-      { expression: createDayOfMonth('*/15'), expected: [0, 15, 30] },
+      { expression: createDayOfMonth('*/15'), expected: [1, 16, 31] },
       { expression: createDayOfMonth('*/5'), expected: expectedOf5 },
       { expression: createDayOfMonth('*/15,*/5'), expected: expectedOf5 },
       { expression: createDayOfMonth('2-5'), expected: [2, 3, 4, 5] },
@@ -152,13 +152,13 @@ describe('parser', function () {
       });
     });
 
-    const expectedOf5 = [0, 5, 10];
+    const expectedOf5 = [1, 6, 11];
     [
       { expression: createMonth('*'), expected: generateFullEntries(validationMap.month) },
       { expression: createMonth('1'), expected: [1] },
-      { expression: createMonth('*/10'), expected: [0, 10] },
+      { expression: createMonth('*/10'), expected: [1, 11] },
       { expression: createMonth('*/5'), expected: expectedOf5 },
-      { expression: createMonth('*/6'), expected: [0, 6, 12] },
+      { expression: createMonth('*/6'), expected: [1, 7] },
       { expression: createMonth('*/10,*/5'), expected: expectedOf5 },
       { expression: createMonth('4-5'), expected: [4, 5] },
       { expression: createMonth('5-5'), expected: [5] },

@@ -56,7 +56,7 @@ const parseField = (field: string, validation: Validation): number[] => {
     if (listExpression.startsWith('*/')) {
       const stepValue = isValidNumericValue(listExpression.replace('*/', ''), validation);
       if (validation.min <= stepValue && stepValue <= validation.max) {
-        let currentStep = 0;
+        let currentStep = validation.min;
         while (currentStep <= validation.max) {
           timeSet.add(currentStep);
           currentStep += stepValue;
