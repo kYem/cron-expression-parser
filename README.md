@@ -19,6 +19,16 @@
 npm install
 ```
 
+### Setup local executable
+```shell
+npm run generate
+```
+
+Now you can run the command with string argument
+```shell
+cron-expression-parser "*/15 0 1,15 * 1-5 /usr/bin/find"
+```
+
 
 ## Introduction
 
@@ -36,7 +46,7 @@ More information available in [wikipedia page](https://en.wikipedia.org/wiki/Cro
 
 Output
 ```sh
-npm run cli "*/15 0 1,15 * 1-5 /usr/bin/find";
+npm run example";
 ```
 
 ```shell

@@ -1,5 +1,4 @@
 class ParsedExpression {
-
   minute: number[] = [];
   hour: number[] = [];
   dayOfMonth: number[] = [];
@@ -101,8 +100,10 @@ const parseField = (field: string, validation: Validation): number[] => {
 }
 
 
-// "*/15 0 1,15 * 1-5 /usr/bin/find"
-export const parse = (expression: string): ParsedExpression => {
+export const parse = (expression: string | undefined): ParsedExpression => {
+  if (typeof expression !== 'string') {
+    throw new Error(`Please provide a valid string expression, received ${expression}`);
+  }
 
   // @TODO How to deal with empty multiple empty spaces within the expression
   // .filter(Boolean) ?

@@ -4,10 +4,15 @@
   "description": "Cron expression parser",
   "main": "index.js",
   "scripts": {
+    "example": "npx ts-node src/cli.ts  '*/15 0 1,15 * 1-5 /usr/bin/find'",
+    "generate": "npm run build && npm link",
     "test": "mocha -r ts-node/register 'tests/**/*.spec.ts'",
     "build": "tsc",
     "watch": "tsc -w",
     "clean": "rm -rf dist build"
+  },
+  "bin": {
+    "cron-expression-parser": "./dist/cli.js"
   },
   "keywords": [
     "cron",
