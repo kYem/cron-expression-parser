@@ -22,7 +22,7 @@ describe('parser', function () {
       createMinute('a'),
       createMinute('a-a'),
       createMinute('60'),
-      createMinute('00'),
+      createMinute('000'),
     ].forEach(expression => {
       it(`should throw error when parsing "${expression}"`, () => {
         expect(() => parse(expression)).to.throw(Error);
@@ -33,7 +33,14 @@ describe('parser', function () {
 
     [
       { expression: createMinute('*'), expected: fullMinuteEntries },
+      { expression: createMinute('0'), expected: [0] },
+      { expression: createMinute('00'), expected: [0] },
+      { expression: createMinute('1'), expected: [1] },
+      { expression: createMinute('55'), expected: [55] },
       { expression: createMinute('*/15'), expected: [0, 15, 30, 45] },
+      { expression: createMinute('*/30'), expected: [0, 30] },
+      { expression: createMinute('*/15,*/30'), expected: [0, 15, 30, 45] },
+      { expression: createMinute('1-4'), expected: [1, 2, 3, 4] },
     ].forEach(({ expression, expected }) => {
       it(`should parse "${expression}" and return ${expected}`, () => {
         const parsedExpression = parse(expression);

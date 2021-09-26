@@ -1,5 +1,3 @@
-
-
 class ParsedExpression {
 
   minute: number[] = [];
@@ -11,36 +9,71 @@ class ParsedExpression {
 }
 
 
+type Validation = { min: number, max: number };
 const validationMap = {
-  minute: { min: 0, max: 59, }
+  minute: { min: 0, max: 59 },
 }
 
 
+const isValidNumericValue = function (expression: string, { min, max }: Validation) {
+  const value = parseInt(expression)
+  if (isNaN(value)) {
+    throw new Error(`Expected value ${expression} to be numeric value`)
+  }
 
+  if (value < min) {
+    throw new Error(`Value must be higher than ${min}, received ${value}`)
+  }
+
+  if (value > max) {
+    throw new Error(`Value must be lower than ${max}, received ${value}`)
+  }
+
+  return value;
+};
 // 0–59	* , -
 const parseMinute = (minute: string): number[] => {
 
-  const { min, max } = validationMap.minute;
+  const validation = validationMap.minute;
   if (minute === '*') {
-    return Array.from({ length: max + 1 }).map((v, i) => i);
+    return Array.from({ length: validation.max + 1 }).map((v, i) => i);
   }
 
   const minuteParts = minute.split(',');
-
   const timeSet = new Set<number>();
-  // 0, | 2, | *, | */5, | 1,2
-  // 1-4,22-50,*/5
+
   minuteParts.forEach(expression => {
 
     if (expression.startsWith('*/')) {
-      const stepValue = parseInt(expression.replace('*/', ''))
-      if (min <= stepValue && stepValue <= max) {
+      const stepValue = isValidNumericValue(expression.replace('*/', ''), validation);
+      if (validation.min <= stepValue && stepValue <= validation.max) {
         let currentStep = 0;
-        while (currentStep <= max) {
+        while (currentStep <= validation.max) {
           timeSet.add(currentStep);
           currentStep += stepValue;
         }
       }
+      return;
+    }
+
+    if (expression.includes('-')) {
+      const rangeParts = expression.split('-');
+      if (rangeParts.length !== 2) {
+        throw new Error(`Range is not valid, received expression ${expression}`)
+      }
+
+      const validStart = isValidNumericValue(rangeParts[0], validation);
+      const validEnd = isValidNumericValue(rangeParts[1], validation);
+      for (let i = validStart; i <= validEnd; i++) {
+        timeSet.add(i);
+      }
+      return;
+    }
+
+    // Is parseInt is enough to validate?
+    if (expression.length === 1 || expression.length === 2) {
+      const value = isValidNumericValue(expression, validation);
+      timeSet.add(value);
       return;
     }
 
@@ -66,7 +99,6 @@ export const parse = (expression: string): ParsedExpression => {
   const parsedExpression = new ParsedExpression();
 
   const [minute, hour, dayOfMonth, month, dayOfWeek, ...command] = parts;
-
 
 
   // Validate that the input for expression part is valid
