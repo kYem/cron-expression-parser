@@ -9,6 +9,7 @@ describe('parser', function () {
       '',
       '* *',
       'a * * * *',
+      '-1 * * * *',
       'a-a * * * *',
       '*/0 * * * *',
       '000 * * * *', // Not valid atm
@@ -169,6 +170,38 @@ describe('parser', function () {
     });
   });
 
+  describe('dayOfWeek', function () {
 
+    const dayOfTheWeek = (field: string) => `* * * * ${field} echo Hello`;
+    describe('expected not valid', function () {
+      [
+        dayOfTheWeek('-1'),
+        dayOfTheWeek('8'),
+        dayOfTheWeek('*/7'),
+        dayOfTheWeek('1-99'),
+      ].forEach(expression => {
+        it(`should throw error when parsing "${expression}"`, () => {
+          expect(() => parse(expression)).to.throw(Error);
+        });
+      });
+    });
 
+    describe('expected valid', function () {
+      const expectOf3 = [0, 3, 6];
+      [
+        { expression: dayOfTheWeek('*'), expected: generateFullEntries(validationMap.dayOfWeek) },
+        { expression: dayOfTheWeek('1'), expected: [1] },
+        { expression: dayOfTheWeek('6'), expected: [6] },
+        { expression: dayOfTheWeek('*/3'), expected: expectOf3 },
+        { expression: dayOfTheWeek('*/6'), expected: [0, 6] },
+        { expression: dayOfTheWeek('*/6,*/3'), expected: expectOf3 },
+        { expression: dayOfTheWeek('4-5'), expected: [4, 5] },
+      ].forEach(({ expression, expected }) => {
+        it(`should parse "${expression}" and return ${expected}`, () => {
+          const parsedExpression = parse(expression);
+          expect(parsedExpression.dayOfWeek).be.eqls(expected);
+        });
+      });
+    })
+  });
 });
