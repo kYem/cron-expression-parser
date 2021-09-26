@@ -19,7 +19,7 @@ function run() {
       console.log(part)
     });
   } catch (e) {
-    console.error(e.message)
+    console.error(e instanceof Error ? e.message : e)
   }
 }
 

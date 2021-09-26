@@ -98,9 +98,7 @@ export const parse = (expression: string | undefined): ParsedExpression => {
     throw new Error(`Please provide a valid string expression, received ${expression}`);
   }
 
-  // @TODO How to deal with empty multiple empty spaces within the expression
-  // .filter(Boolean) ?
-  const parts = expression.split(' ');
+  const parts = expression.split(' ').filter(Boolean);
   if (parts.length < 5) {
     throw new Error(`Expression not valid`);
   }
