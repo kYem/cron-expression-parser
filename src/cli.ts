@@ -13,10 +13,14 @@ function run() {
     process.exit(1);
   }
 
-  const parsedExpression = parse(args);
-  toStringArray(parsedExpression).forEach((part) => {
-    console.log(part)
-  });
+  try {
+    const parsedExpression = parse(args);
+    toStringArray(parsedExpression).forEach((part) => {
+      console.log(part)
+    });
+  } catch (e) {
+    console.error(e.message)
+  }
 }
 
 run();
