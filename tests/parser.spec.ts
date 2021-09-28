@@ -13,6 +13,7 @@ describe('parser', function () {
       'a-a * * * *',
       '*/0 * * * *',
       '000 * * * *', // Not valid atm
+      '24-43/5 * * * *', // Range and Step combination
       '1-0 * * * *',
       '*,1-0 * * * *',
     ].forEach(expression => {

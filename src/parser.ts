@@ -53,6 +53,10 @@ const parseField = (field: string, validation: Validation): number[] => {
 
   listParts.forEach(listExpression => {
 
+    if (listExpression.includes('/') && listExpression.includes('-')) {
+      throw new Error(`Range and Step combination is not supported, received expression "${listExpression}"`)
+    }
+
     if (listExpression.startsWith('*/')) {
       const stepValue = isValidNumericValue(listExpression.replace('*/', ''), validation);
       if (validation.min <= stepValue && stepValue <= validation.max) {
